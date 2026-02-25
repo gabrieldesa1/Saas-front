@@ -30,12 +30,17 @@ export default function Categories() {
   const [selectedColor, setSelectedColor] = useState(colorOptions[0].value);
   const [categoryName, setCategoryName] = useState("");
 
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [], createCategory } = useCategories();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // aqui depois você liga no POST /categories
+  try {
+    await createCategory.mutateAsync({
+      name: categoryName,
+      color: selectedColor,
+    });
+
     toast({
       title: "Categoria criada!",
       description: `${categoryName} foi adicionada com sucesso.`,
@@ -44,7 +49,14 @@ export default function Categories() {
     setOpen(false);
     setCategoryName("");
     setSelectedColor(colorOptions[0].value);
-  };
+  } catch (error) {
+    toast({
+      title: "Erro ao criar categoria",
+      description: "Tente novamente.",
+      variant: "destructive",
+    });
+  }
+};
 
   return (
     <AppLayout>

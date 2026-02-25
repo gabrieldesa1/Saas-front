@@ -1,24 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api"; // seu axios instance
 
-/**
- * Tipo exatamente no formato que a API devolve
- * (snake_case, sem adaptação desnecessária)
- */
+export function useCategories() {
+  const queryClient = useQueryClient();
 
-export interface ApiCategory {
-    id: number;
-    name: string;
-    color: string;
-    product_count?: number;
-}
+  const query = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await api.get("/categories");
+      return data;
+    },
+  });
 
-export function useCategories(){
-    return useQuery<ApiCategory[]>({
-        queryKey: ["categories"],
-        queryFn: async () => {
-            const { data } = await api.get<ApiCategory[]>("/categories");
-            return data;
-        },
-    });
+  const createCategory = useMutation({
+    mutationFn: async (newCategory: {
+      name: string;
+      color: string;
+    }) => {
+      const { data } = await api.post("/categories", newCategory);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+
+  return {
+    ...query,
+    createCategory,
+  };
 }
