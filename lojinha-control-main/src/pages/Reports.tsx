@@ -66,7 +66,7 @@ export default function Reports() {
     fetchReports();
   }, []);
 
-  // 🔥 Loading primeiro
+  // Loading 
   if (loading) {
     return (
       <AppLayout>
@@ -75,7 +75,7 @@ export default function Reports() {
     );
   }
 
-  // 🔥 Depois erro
+  //  erro
   if (!data) {
     return (
       <AppLayout>

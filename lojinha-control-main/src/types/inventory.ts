@@ -11,7 +11,12 @@ export interface Product {
   cost: number;
   createdAt: Date;
   updatedAt: Date;
+
+  categoryId?: number | null;
+
 }
+
+
 
 export interface Category {
   id: string;
